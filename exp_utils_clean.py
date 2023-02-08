@@ -909,6 +909,23 @@ def run_and_plot(csvs,
                                      exponential=exponential_weights,
                                      write_path=plot_path+'fig5_'+str(w)+'.pdf')
 
+        # Table. 1 (count the number of times a feature from the auto satellite data-based model shows up in the top 3 positive or negative weights) 
+        n_auto_models = len(set(mnds))*len(set(regions))
+        # this is assuming that the auto models csvs are on top of the csvs list
+        table1_weights = mean_weights[:n_auto_models] 
+        plot_weights_list = []
+        for i, w in enumerate(table1_weights):
+          d = pd.DataFrame({'feature': features, 'weights': w})
+          # sort by weights (ascending)
+          d = d.sort_values('weights')
+          # top 3 negative
+          plot_weights_list.append(d[:3]) 
+          # top 3 positive
+          plot_weights_list.append(d[-3:])
+        plot_weights = pd.concat(plot_weights_list)
+        # count and print the number of times that a feature shows up in the top 3 positive or negative weights list
+        print(plot_weights['feature'].value_counts()) 
+
     # Fig. 6 (compare logistic regression and domain adaptation)
     for m, met in enumerate(metric):
         if met == 'Weights':
